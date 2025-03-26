@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COVID-19 Diagnosis App</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .question { margin-bottom: 10px; }
+    button { margin-top: 15px; padding: 10px 20px; }
+    .result { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>COVID-19 Probability Diagnosis</h2>
+
+  <div class="question">
+    <label><input type="checkbox" id="breath"> Do you experience breath problems?</label>
+  </div>
+  <div class="question">
+    <label><input type="checkbox" id="fever"> Do you have a fever? (+ 37.7ºC)</label>
+  </div>
+  <div class="question">
+    <label><input type="checkbox" id="cough"> Do you have a dry and persistent cough?</label>
+  </div>
+  <div class="question">
+    <label><input type="checkbox" id="contact"> Have you had close contact with any confirmed positive patient?</label>
+  </div>
+  <div class="question">
+    <label><input type="checkbox" id="over20"> Have you been with these symptoms for more than 20 days?</label>
+  </div>
+
+  <button onclick="runDiagnosis()">Diagnose</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    function diagnose(symptoms) {
+      // FAILURE 2: The threshold value is incorrect. It should be 30 instead of 20.
+      const weights = [15, 60, 29, 15, -15];
+      const threshold = 20;
+
+      let score = symptoms.reduce((total, symptom, index) => symptom ? total + weights[index] : total, 0);
+
+      return score >= threshold;
+    }
+
+    function runDiagnosis() {
+      const symptoms = [
+        document.getElementById('breath').checked,
+        document.getElementById('fever').checked,
+        document.getElementById('cough').checked,
+        document.getElementById('contact').checked,
+        document.getElementById('over20').checked,
+      ];
+
+      const isInfected = diagnose(symptoms);
+      const resultEl = document.getElementById('result');
+
+      if (isInfected) {
+        resultEl.textContent = 'You may be infected with Coronavirus. Please seek immediate medical attention.';
+        resultEl.style.color = 'red';
+      } else {
+        resultEl.textContent = 'Your risk seems low. Maintain precautions and monitor your health closely.';
+        resultEl.style.color = 'green';
+      }
+    }
+
+    // Example test case: (should return true)
+    console.log(diagnose([true, false, false, true, false]));
+  </script>
+
+</body>
+</html>
+
