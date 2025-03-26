@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRPF Tax Calculator</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .calculator {
+            background-color: #333;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            width: 300px;
+        }
+        .calculator h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+        input[type='number'] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: none;
+            text-align: right;
+            font-size: 1.2em;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background-color: #f79231;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e6842a;
+        }
+        .result, .error {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .error {
+            color: #ff5555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <h2>IRPF Calculator</h2>
+
+    <form id="taxForm">
+        <label>
+            Total Income (€):
+            <input type="number" id="income" min="0" step="0.01" required>
+        </label>
+
+        <label>
+            <input type="checkbox" id="largeFamily">
+            Large Family Discount
+        </label>
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    <div id="message"></div>
+</div>
+
+<script>
+
+function calculateTax(totalIncome, largeFamily) {
+    let remainingIncome = totalIncome;
+    let tax = 0;
+
+    if (remainingIncome <= 13000) {
+        tax += remainingIncome * 0.19;
+        remainingIncome = 0;
+    } else {
+        tax += 13000 * 0.19;
+        remainingIncome -= 13000;
+    }
+
+    if (remainingIncome > 0) {
+        if (remainingIncome <= 17000) {
+            tax += remainingIncome * 0.24;
+            remainingIncome = 0;
+        } else {
+            tax += 17000 * 0.24;
+            remainingIncome -= 17000;
+        }
+    }
+
+    if (remainingIncome > 0) {
+        tax += remainingIncome * 0.30;
+    }
+
+    if (largeFamily) {
+        tax -= 2500;
+    }
+
+    // Failure - Forget to compare to 0 before returning
+    //return tax < 0 ? 0 : tax;
+    return tax;
+}
+
+// Handle form submission
+document.getElementById('taxForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const incomeInput = document.getElementById('income');
+    const largeFamilyCheckbox = document.getElementById('largeFamily');
+    const messageDiv = document.getElementById('message');
+
+    const totalIncome = parseFloat(incomeInput.value);
+
+    if (isNaN(totalIncome) || totalIncome <= 0) {
+        messageDiv.innerHTML = '<div class="error">Enter a valid positive number.</div>';
+        return;
+    }
+
+    const largeFamily = largeFamilyCheckbox.checked;
+    const tax = calculateTax(totalIncome, largeFamily);
+
+    messageDiv.innerHTML = `<div class="result">IRPF Tax: ${tax.toFixed(2)}€</div>`;
+});
+
+</script>
+
+</body>
+</html>

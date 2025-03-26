@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>maxint</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #121212;
+            color: #0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #222;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px #0f0;
+            width: 360px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            background: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 8px;
+            margin-top: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            cursor: pointer;
+            background-color: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px;
+            margin-top: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .description {
+            font-size: 0.85em;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #0f0;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>maxint</h2>
+    <div class="description">
+        Software calculates the addition of all integer numbers smaller or equal to the absolute value of "value".<br>
+        - If result ≤ "maxint", returns the sum.<br>
+        - If result > "maxint" or "maxint" < 0, returns "ERROR".
+    </div>
+    <label for="value">Value (-100 to 100):</label>
+    <input type="number" id="value" placeholder="value">
+    
+    <label for="maxint">MaxInt (-100 to 100):</label>
+    <input type="number" id="maxint" placeholder="maxint">
+    
+    <button onclick="calculate()">Execute</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    function calculate() {
+        let value = parseInt(document.getElementById('value').value);
+        let maxint = parseInt(document.getElementById('maxint').value);
+
+        if (isNaN(value) || isNaN(maxint)) {
+            document.getElementById('result').innerText = 'Enter valid numbers';
+            return;
+        }
+
+	// FAILURE 1. I forget to add this checking 
+        /*if (maxint < 0) {
+            document.getElementById('result').innerText = 'ERROR';
+            return;
+        }*/
+
+        value = Math.abs(value);
+        let sum = 0;
+        for (let i = 0; i <= value; i++) {
+            sum += i;
+        }
+
+        if (sum <= maxint) {
+            document.getElementById('result').innerText = 'Result: ' + sum;
+        } else {
+            document.getElementById('result').innerText = 'ERROR';
+        }
+    }
+</script>
+</body>
+</html>
+

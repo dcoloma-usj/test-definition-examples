@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Difference Calculator</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7fa; 
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container { 
+            max-width: 400px; 
+            width: 100%;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        input, select, button { 
+            padding: 10px; 
+            margin-top: 10px;
+            width: calc(100% - 22px); 
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #5a9bf5;
+            color: white;
+            cursor: pointer;
+            border: none;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #4a8ae6;
+        }
+        .result { 
+            margin-top: 20px; 
+            font-weight: bold; 
+            text-align: center;
+            color: #444;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #555;
+        }
+        .time-group {
+            display: flex;
+            gap: 10px;
+        }
+        .time-group input, .time-group select {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Time Difference Calculator</h2>
+        <div>
+            <label>Start Time:</label>
+            <div class="time-group">
+                <input type="number" id="startHour" placeholder="HH" min="1" max="12">
+                <input type="number" id="startMinute" placeholder="MM" min="0" max="59">
+                <select id="startType">
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <label>End Time:</label>
+            <div class="time-group">
+                <input type="number" id="endHour" placeholder="HH" min="1" max="12">
+                <input type="number" id="endMinute" placeholder="MM" min="0" max="59">
+                <select id="endType">
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+        </div>
+        <button onclick="calculateDifference()">Calculate Difference</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function convertTo24Hour(hour, minute, period) {
+            if (period === 'AM' && hour === 12) {
+                hour = 0;
+            } else if (period === 'PM' && hour !== 12) {
+                hour += 12;
+            }
+            return hour * 60 + minute;
+        }
+
+        function calculateDifference() {
+            const startHour = parseInt(document.getElementById('startHour').value, 10);
+            const startMinute = parseInt(document.getElementById('startMinute').value, 10);
+            const startPeriod = document.getElementById('startType').value;
+
+            const endHour = parseInt(document.getElementById('endHour').value, 10);
+            const endMinute = parseInt(document.getElementById('endMinute').value, 10);
+            const endPeriod = document.getElementById('endType').value;
+
+            if (
+                isNaN(startHour) || isNaN(startMinute) || 
+                isNaN(endHour) || isNaN(endMinute) ||
+                startHour < 1 || startHour > 12 ||
+                startMinute < 0 || startMinute > 59 ||
+                endHour < 1 || endHour > 12 ||
+                endMinute < 0 || endMinute > 59
+            ) {
+                document.getElementById('result').innerText = 'Please enter valid values: hours between 1 and 12, minutes between 0 and 59.';
+                return;
+            }
+
+            const startTotalMinutes = convertTo24Hour(startHour, startMinute, startPeriod);
+            let endTotalMinutes = convertTo24Hour(endHour, endMinute, endPeriod);
+
+            // Si la hora de finalización es anterior o igual a la de inicio, asumimos que es al día siguiente
+            if (endTotalMinutes <= startTotalMinutes) {
+                endTotalMinutes += 24 * 60; // Añadir 24 horas en minutos
+            }
+
+            const differenceInMinutes = endTotalMinutes - startTotalMinutes;
+            const diffHours = Math.floor(differenceInMinutes / 60);
+            const diffMinutes = differenceInMinutes % 60;
+
+            document.getElementById('result').innerText = `Difference: ${diffHours} hour(s) and ${diffMinutes} minute(s).`;
+        }
+    </script>
+</body>
+</html>
+

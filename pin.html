@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PIN Code Validation App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f2f2f2;
+    }
+
+    #pin-setup {
+      margin-bottom: 30px;
+    }
+
+    #display {
+      font-size: 32px;
+      letter-spacing: 15px;
+      margin: 20px;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .key {
+      padding: 20px;
+      font-size: 20px;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .key:hover {
+      background-color: #ddd;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>PIN Code Validator</h1>
+
+  <div id="pin-setup">
+    <label>Set PIN: <input type="password" id="set-pin" maxlength="4" /></label>
+    <button onclick="savePIN()">Save</button>
+  </div>
+
+  <div id="display">____</div>
+
+  <div class="keypad" id="keypad"></div>
+
+  <div id="result"></div>
+
+  <script>
+    let configuredPIN = "";
+    let inputPIN = "";
+
+    function savePIN() {
+      const pinInput = document.getElementById('set-pin');
+      if (pinInput.value.length !== 4 || !/^\d{4}$/.test(pinInput.value)) {
+        alert('Please enter a valid 4-digit numeric PIN.');
+        return;
+      }
+      configuredPIN = pinInput.value;
+      inputPIN = "";
+      updateDisplay();
+      document.getElementById('result').textContent = '';
+      alert('PIN saved!');
+    }
+
+    function handleKeyPress(digit) {
+      if (inputPIN.length >= 4) return;
+      inputPIN += digit;
+      updateDisplay();
+
+      if (inputPIN.length === 4) {
+        validatePIN();
+      }
+    }
+
+    function updateDisplay() {
+      const masked = inputPIN.split('').map(() => '*').join('');
+      const remaining = '_'.repeat(4 - inputPIN.length);
+      document.getElementById('display').textContent = masked + remaining;
+    }
+
+    function validatePIN() {
+      const result = document.getElementById('result');
+      if (inputPIN === configuredPIN) {
+        result.textContent = "Correct PIN!";
+        result.style.color = "green";
+      } else {
+        result.textContent = "Incorrect PIN.";
+        result.style.color = "red";
+      }
+      inputPIN = "";
+      setTimeout(updateDisplay, 1000);
+    }
+
+    function createKeypad() {
+      const keypad = document.getElementById('keypad');
+      for (let i = 1; i <= 9; i++) {
+        const key = document.createElement('div');
+        key.className = 'key';
+        key.textContent = i;
+        key.onclick = () => handleKeyPress(i.toString());
+        keypad.appendChild(key);
+      }
+
+      // Empty div for layout
+      keypad.appendChild(document.createElement('div'));
+
+      // Zero key
+      const zeroKey = document.createElement('div');
+      zeroKey.className = 'key';
+      zeroKey.textContent = '0';
+      zeroKey.onclick = () => handleKeyPress('0');
+      keypad.appendChild(zeroKey);
+
+      // Clear button
+      const clearKey = document.createElement('div');
+      clearKey.className = 'key';
+      clearKey.textContent = '←';
+      clearKey.onclick = () => {
+        inputPIN = inputPIN.slice(0, -1);
+        updateDisplay();
+      };
+      keypad.appendChild(clearKey);
+    }
+
+    createKeypad();
+    updateDisplay();
+  </script>
+</body>
+</html>
+
